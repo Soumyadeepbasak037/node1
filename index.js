@@ -1,7 +1,6 @@
 const formidable = require('formidable')
 const http = require('http')
 const fs = require('fs')
-const pg = require('pg')
 
 http.createServer((req,res)=>{
     if(req.url === "/go"){
