@@ -1,8 +1,7 @@
-const formidable = require('formidable');
 const http = require('http');
 const fs = require('fs');
 
-const PORT = process.env.PORT || 5000; 
+const PORT = process.env.PORT || 5000;
 
 http.createServer((req, res) => {
     if (req.url === "/go") {
@@ -13,30 +12,44 @@ http.createServer((req, res) => {
             });
             req.on('end', () => {
                 console.log(body);
-                res.writeHead(200, { 'Content-Type': 'text/plain' });  // Correct Content-Type
-                res.end(`Received data: ${body}`);
+                
+                // Extract the data from the POST request
+                const username = new URLSearchParams(body).get('data'); // Parse the form data
+                const filename = 'newFile.txt'; // Name of the new file
+
+                // Create and write to the new file
+                fs.writeFile(filename, username, (err) => {
+                    if (err) {
+                        res.writeHead(500, { 'Content-Type': 'text/plain' });
+                        res.end('Error writing file');
+                        return;
+                    }
+
+                    // Read the newly created file
+                    fs.readFile(filename, (err, data) => {
+                        if (err) {
+                            res.writeHead(500, { 'Content-Type': 'text/plain' });
+                            res.end('Error reading file');
+                            return;
+                        }
+
+                        res.writeHead(200, { 'Content-Type': 'text/plain' });
+                        res.end(`Received data: ${data}`);
+                    });
+                });
             });
         }
     } else {
-        fs.readFile('l.txt', (err, data) => {
-            if (err) { // Added error handling for file read
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end('Error reading file');
-                return;
-            }
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(`
-                <body>
-                    <h1>File Content:</h1>
-                    <pre>${data}</pre> <!-- Added <pre> to format file content -->
-                    <form action="/go" method="POST">
-                        <textarea name="data" placeholder="Username"></textarea>
-                        <button type="submit">Submit</button>
-                    </form>
-                </body>
-            `);
-        });
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(`
+            <body>
+                <form action="/go" method="POST">
+                    <textarea name="data" placeholder="Username"></textarea>
+                    <button type="submit">Submit</button>
+                </form>
+            </body>
+        `);
     }
 }).listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`); // Corrected logging
+    console.log(`Listening on port ${PORT}`);
 });
