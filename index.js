@@ -2,6 +2,8 @@ const formidable = require('formidable')
 const http = require('http')
 const fs = require('fs')
 
+
+const PORT = process.env.PORT || 5000; 
 http.createServer((req,res)=>{
     if(req.url === "/go"){
         if(req.method === "POST"){
@@ -18,8 +20,15 @@ http.createServer((req,res)=>{
     }
     else{
         res.writeHead(200,{ 'Content-Type': 'text/html' });
-        res.end("<body><form action=\"http://localhost:5000/go\" method=\"POST\"><textarea name = \"data\" placeholder=\"Username\"></textarea><button type=\"submit\">Submit</button></form></body>");
+        res.end(`
+            <body>
+                <form action="/go" method="POST">
+                    <textarea name="data" placeholder="Username"></textarea>
+                    <button type="submit">Submit</button>
+                </form>
+            </body>
+        `);
         }
-}).listen(5000,()=>{
+}).listen(PORT,()=>{
     console.log("listening on 5000")
 })
