@@ -15,11 +15,11 @@ http.createServer((req,res)=>{
                 res.end(`Received data: ${body}`);
             });
         }
+    }
     else{
         res.writeHead(200,{ 'Content-Type': 'text/html' });
         res.end("<body><form action=\"http://localhost:5000/go\" method=\"POST\"><textarea name = \"data\" placeholder=\"Username\"></textarea><button type=\"submit\">Submit</button></form></body>");
         }
-    }
 }).listen(5000,()=>{
     console.log("listening on 5000")
 })
