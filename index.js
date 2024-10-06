@@ -19,6 +19,9 @@ http.createServer((req,res)=>{
         }
     }
     else{
+        fs.readFile('l.txt',(err,data)=>{
+            res.write(data);
+        })
         res.writeHead(200,{ 'Content-Type': 'text/html' });
         res.end(`
             <body>
